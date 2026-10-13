@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en"><head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-17628351890"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'AW-17628351890');
+</script>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Product | TestShop</title>
+<script src="config.js"></script><script src="tag.js"></script><script src="app.js"></script>
+<link rel="stylesheet" href="styles.css"></head><body>
+<main id="pd"></main>
+<script>
+var id = new URLSearchParams(location.search).get("id") || "SKU-001";
+var p = getProduct(id) || PRODUCTS[0];
+document.title = p.item_name + " | TestShop";
+document.getElementById("pd").innerHTML =
+  '<div class="card" style="max-width:420px;margin:auto"><span class="emoji" style="font-size:120px">' + p.emoji + '</span>' +
+  '<h1>' + p.item_name + '</h1><p>' + p.item_category + ' · ' + p.item_id + '</p>' +
+  '<div class="price">' + money(p.price) + '</div>' +
+  '<label>Qty <select id="qty"><option>1</option><option>2</option><option>3</option></select></label><br><br>' +
+  '<button onclick="addToCart(p.item_id, +document.getElementById(\'qty\').value)">Add to cart</button> ' +
+  '<button class="secondary" onclick="addToCart(p.item_id,1);location.href=\'checkout.html\'">Buy now</button></div>';
+track("view_item", { currency: CUR, value: p.price, items: [toItem(p)] });
+</script></body></html>

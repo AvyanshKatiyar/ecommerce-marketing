@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en"><head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-17628351890"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'AW-17628351890');
+</script>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Checkout | TestShop</title>
+<script src="config.js"></script><script src="tag.js"></script><script src="app.js"></script>
+<link rel="stylesheet" href="styles.css"></head><body>
+<main><h1>Checkout</h1><p id="sum"></p>
+<form class="stack" id="co">
+  <label>Full name</label><input name="name" required value="Test User">
+  <label>Email</label><input name="email" type="email" required value="test@example.com">
+  <label>Phone</label><input name="phone" value="+919999999999">
+  <label>Shipping</label><select name="ship" id="ship"><option>Standard</option><option>Express</option></select>
+  <label>Payment</label><select name="pay" id="pay"><option value="">Select…</option><option>Card</option><option>UPI</option><option>COD</option></select>
+  <label>Coupon</label><input name="coupon" placeholder="e.g. TEST10">
+  <br><br><button>Place order (test)</button>
+</form></main>
+<script>
+var items = cartItems();
+if (!items.length) { location.href = "index.html"; }
+document.getElementById("sum").textContent = items.length + " item(s) · Total " + money(cartTotal());
+track("begin_checkout", { currency: CUR, value: cartTotal(), items: items }, "begin_checkout");
+document.getElementById("ship").addEventListener("change", function () {
+  track("add_shipping_info", { currency: CUR, value: cartTotal(), shipping_tier: this.value, items: items });
+});
+document.getElementById("pay").addEventListener("change", function () {
+  if (this.value) track("add_payment_info", { currency: CUR, value: cartTotal(), payment_type: this.value, items: items });
+});
+document.getElementById("co").addEventListener("submit", function (e) {
+  e.preventDefault();
+  var f = new FormData(this);
+  var order = { transaction_id: "T-" + Date.now(), value: cartTotal(), currency: CUR, coupon: f.get("coupon") || undefined,
+    shipping: f.get("ship") === "Express" ? 99 : 0, tax: 0, items: items,
+    email: f.get("email"), phone: f.get("phone") };
+  sessionStorage.setItem("ts_order", JSON.stringify(order));
+  localStorage.removeItem("ts_cart");
+  location.href = "thank-you.html?order_id=" + order.transaction_id;
+});
+</script></body></html>

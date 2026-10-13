@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en"><head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-17628351890"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'AW-17628351890');
+</script>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Shop | TestShop</title>
+<script src="config.js"></script><script src="tag.js"></script><script src="app.js"></script>
+<link rel="stylesheet" href="styles.css"></head><body>
+<main><h1>All products</h1><div class="grid" id="grid"></div></main>
+<script>
+var g = document.getElementById("grid");
+PRODUCTS.forEach(function (p, i) {
+  g.insertAdjacentHTML("beforeend",
+    '<div class="card"><a href="product.html?id=' + p.item_id + '" data-id="' + p.item_id + '">' +
+    '<span class="emoji">' + p.emoji + '</span><div>' + p.item_name + '</div></a>' +
+    '<div class="price">' + money(p.price) + '</div>' +
+    '<button onclick="addToCart(\'' + p.item_id + '\')">Add to cart</button></div>');
+});
+track("view_item_list", { item_list_id: "all", item_list_name: "All products",
+  items: PRODUCTS.map(function (p, i) { var it = toItem(p); it.index = i; return it; }) });
+g.addEventListener("click", function (e) {
+  var a = e.target.closest("a[data-id]"); if (!a) return;
+  track("select_item", { item_list_id: "all", item_list_name: "All products", items: [toItem(getProduct(a.dataset.id))] });
+});
+</script></body></html>

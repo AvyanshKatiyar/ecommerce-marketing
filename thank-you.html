@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en"><head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-17628351890"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'AW-17628351890');
+</script>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Order confirmed | TestShop</title>
+<script src="config.js"></script><script src="tag.js"></script><script src="app.js"></script>
+<link rel="stylesheet" href="styles.css"></head><body>
+<main><h1>✅ Thank you! Order confirmed</h1><p id="msg"></p><a class="btn" href="index.html">Shop again</a></main>
+<script>
+var o = JSON.parse(sessionStorage.getItem("ts_order") || "null");
+if (o) {
+  document.getElementById("msg").textContent = "Order " + o.transaction_id + " · " + money(o.value);
+  // Enhanced conversions: hashed automatically by gtag
+  gtag("set", "user_data", { email: o.email, phone_number: o.phone });
+  track("purchase", { transaction_id: o.transaction_id, value: o.value, currency: o.currency, coupon: o.coupon,
+    shipping: o.shipping, tax: o.tax, items: o.items }, "purchase");
+  sessionStorage.removeItem("ts_order"); // prevents duplicate purchase on refresh
+} else {
+  document.getElementById("msg").textContent = "No new order in this session (purchase not re-fired on refresh).";
+}
+</script></body></html>

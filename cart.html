@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en"><head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-17628351890"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'AW-17628351890');
+</script>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cart | TestShop</title>
+<script src="config.js"></script><script src="tag.js"></script><script src="app.js"></script>
+<link rel="stylesheet" href="styles.css"></head><body>
+<main><h1>Your cart</h1><div id="cart"></div></main>
+<script>
+function render() {
+  var items = cartItems(), el = document.getElementById("cart");
+  if (!items.length) { el.innerHTML = '<p>Cart is empty. <a href="index.html">Continue shopping</a></p>'; return; }
+  el.innerHTML = '<table><tr><th>Item</th><th>Qty</th><th>Price</th><th></th></tr>' +
+    items.map(function (i) { return '<tr><td>' + i.item_name + '</td><td>' + i.quantity + '</td><td>' +
+      money(i.price * i.quantity) + '</td><td><button class="link" onclick="removeFromCart(\'' + i.item_id +
+      '\');render()">Remove</button></td></tr>'; }).join("") +
+    '<tr><th colspan="2">Total</th><th colspan="2">' + money(cartTotal()) + '</th></tr></table><br>' +
+    '<a class="btn" href="checkout.html">Proceed to checkout</a>';
+}
+render();
+if (cartItems().length) track("view_cart", { currency: CUR, value: cartTotal(), items: cartItems() });
+</script></body></html>

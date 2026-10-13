@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en"><head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-17628351890"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'AW-17628351890');
+</script>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Contact | TestShop</title>
+<script src="config.js"></script><script src="tag.js"></script><script src="app.js"></script>
+<link rel="stylesheet" href="styles.css"></head><body>
+<main><h1>Contact / Request a quote</h1>
+<form class="stack" id="lead">
+  <label>Name</label><input name="name" required value="Test Lead">
+  <label>Email</label><input name="email" type="email" required value="lead@example.com">
+  <label>Message</label><textarea name="msg" rows="3">Test enquiry</textarea>
+  <br><br><button>Submit</button>
+</form><p id="done"></p></main>
+<script>
+document.getElementById("lead").addEventListener("submit", function (e) {
+  e.preventDefault();
+  gtag("set", "user_data", { email: new FormData(this).get("email") });
+  track("generate_lead", { currency: CUR, value: 500, lead_source: "contact_form" }, "generate_lead");
+  document.getElementById("done").textContent = "Thanks — lead submitted (test).";
+  this.reset();
+});
+</script></body></html>
