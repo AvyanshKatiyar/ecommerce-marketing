@@ -1,10 +1,11 @@
 // Google tag: pasted directly in each page <head> (unchanged).
-// Pinterest tag: loaded below (this file runs in every page <head>).
+// Pinterest + TikTok tags: loaded below (this file runs in every page <head>).
 (function () {
   var cfg = window.SHOP_CONFIG || {};
   var ids = (cfg.TAG_IDS || []).filter(function (id) { return id && id.indexOf("XXXX") === -1; });
   var debug = cfg.DEBUG_MODE || /[?&]debug=1/.test(location.search);
   var PIN_ID = "2614432047622";
+  var TT_ID  = "CRPEQQBC77U0USAV7NC0";
 
   // ================= GOOGLE (unchanged) =================
   window.dataLayer = window.dataLayer || [];
@@ -30,84 +31,13 @@
     r=document.getElementsByTagName("script")[0];
     r.parentNode.insertBefore(t,r)}}("https://s.pinimg.com/ct/core.js");
 
-  // Enhanced Match: use an email the visitor already entered (if any)
-  var savedEm = null;
-  try { savedEm = localStorage.getItem("ts_em"); } catch (e) {}
-  pintrk("load", PIN_ID, savedEm ? { em: savedEm } : {});
-  pintrk("page");
+  // ================= TIKTOK PIXEL (base code) =================
+  !function (w, d, t) {
+    w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(
+    var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script")
+    ;n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
+  }(window, document, "ttq");
 
-  // Capture email from any form (checkout, contact, newsletter)
-  document.addEventListener("submit", function (e) {
-    var input = e.target && e.target.querySelector('input[type="email"]');
-    if (!input || !input.value) return;
-    var em = input.value.trim().toLowerCase();
-    try { localStorage.setItem("ts_em", em); } catch (x) {}
-    pintrk("set", { em: em });
-  }, true);
-
-  // GA4 event name -> Pinterest event
-  var PIN_MAP = {
-    view_item_list: "viewcategory",
-    view_item:      "pagevisit",
-    add_to_cart:    "addtocart",
-    begin_checkout: "custom",
-    purchase:       "checkout",
-    generate_lead:  "lead",
-    sign_up:        "signup"
-  };
-  function pinParams(p) {
-    var out = { event_id: "ev-" + Date.now() + "-" + Math.random().toString(36).slice(2, 8) };
-    if (p.value !== undefined) out.value = p.value;
-    if (p.currency) out.currency = p.currency;
-    if (p.transaction_id) out.order_id = p.transaction_id;
-    if (p.coupon) out.promo_code = p.coupon;
-    if (p.lead_source) out.lead_type = p.lead_source;
-    if (p.items && p.items.length) {
-      out.order_quantity = p.items.reduce(function (s, i) { return s + (i.quantity || 1); }, 0);
-      out.line_items = p.items.map(function (i) {
-        return { product_id: i.item_id, product_name: i.item_name, product_category: i.item_category,
-                 product_price: i.price, product_quantity: i.quantity || 1 };
-      });
-    }
-    return out;
-  }
-
-  // ================= track(): Google + Pinterest =================
-  window.track = function (name, params, adsKey) {
-    params = params || {};
-    var gParams = Object.assign({}, params);
-    if (debug) gParams.debug_mode = true;
-    gtag("event", name, gParams);
-    log("Google · " + name, params);
-
-    var label = adsKey && cfg.ADS_CONVERSIONS && cfg.ADS_CONVERSIONS[adsKey];
-    if (label) {
-      var conv = { send_to: label };
-      if (params.value !== undefined) { conv.value = params.value; conv.currency = params.currency; }
-      if (params.transaction_id) conv.transaction_id = params.transaction_id;
-      gtag("event", "conversion", conv);
-      log("Google Ads conversion → " + label, conv);
-    }
-
-    var pinEvent = PIN_MAP[name];
-    if (pinEvent) {
-      var pp = pinParams(params);
-      pintrk("track", pinEvent, pp);
-      log("Pinterest · " + pinEvent, pp);
-    }
-  };
-
-  // On-page event log
-  function log(name, params) {
-    console.log("[TestShop event]", name, params);
-    var write = function () {
-      var box = document.getElementById("event-log-list");
-      if (!box) return;
-      var li = document.createElement("li");
-      li.innerHTML = "<b>" + name + "</b> <code>" +
-        JSON.stringify(params).replace(/</g, "&lt;").slice(0, 300) + "</code>";
-      box.prepend(li);
-    };
-    document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", write) : write();
-  }
-})();
+  // ================= Enhanced / Advanced Match =================
+  var savedEm = null, savedEmHash = null;
+  try { savedEm = localStorage
